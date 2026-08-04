@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: shopmall-api
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: shopmall-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
