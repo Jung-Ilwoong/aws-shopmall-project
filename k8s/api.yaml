@@ -14,23 +14,13 @@ spec:
     spec:
       containers:
         - name: api
+          # TODO(apply 시 교체): <ECR_REPOSITORY_URL>:<TAG>
           image: shopmall-api:local
-          imagePullPolicy: Never
           ports:
             - containerPort: 8000
-          env:
-            - name: DB_HOST
-              value: mysql
-            - name: DB_PORT
-              value: "3306"
-            - name: DB_USER
-              value: admin
-            - name: DB_PASSWORD
-              value: changeme
-            - name: DB_NAME
-              value: shopmall
-            - name: JWT_SECRET
-              value: dev-secret-change-in-production
+          envFrom:
+            - secretRef:
+                name: shopmall-secrets
           resources:
             requests:
               cpu: "100m"

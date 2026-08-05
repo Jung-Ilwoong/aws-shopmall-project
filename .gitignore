@@ -11,6 +11,9 @@ terraform/crash.log
 *.pyc
 app/.env
 
+# K8s secrets (실제 값 포함, .example 템플릿만 커밋)
+k8s/api-secret.yaml
+
 # OS
 .DS_Store
 Thumbs.db

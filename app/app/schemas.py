@@ -58,6 +58,24 @@ class ProductOut(BaseModel):
     created_at: datetime
 
 
+# ---------- AI ----------
+class ChatRequest(BaseModel):
+    message: str
+
+
+class ChatResponse(BaseModel):
+    reply: str
+
+
+class DescriptionRequest(BaseModel):
+    name: str
+    category: Optional[str] = None
+
+
+class DescriptionResponse(BaseModel):
+    description: str
+
+
 # ---------- Cart ----------
 class CartItemCreate(BaseModel):
     product_id: int

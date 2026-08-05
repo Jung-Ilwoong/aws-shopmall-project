@@ -1,11 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import models, schemas
+from app import ai, models, schemas
 from app.auth import get_current_admin
 from app.database import get_db
 
 router = APIRouter(prefix="/products", tags=["products"])
+
+
+@router.post(
+    "/generate-description",
+    response_model=schemas.DescriptionResponse,
+    dependencies=[Depends(get_current_admin)],
+)
+def generate_description(payload: schemas.DescriptionRequest):
+    description = ai.generate_product_description(payload.name, payload.category)
+    return schemas.DescriptionResponse(description=description)
 
 
 @router.get("", response_model=list[schemas.ProductOut])

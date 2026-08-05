@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.database import Base, engine
-from app.routers import auth, products, cart, orders
+from app.routers import auth, products, cart, orders, chat
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,6 +20,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(cart.router)
 app.include_router(orders.router)
+app.include_router(chat.router)
 
 # /metrics 엔드포인트 자동 생성 (Prometheus가 이 경로를 긁어감)
 Instrumentator().instrument(app).expose(app)
