@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: api
-          # TODO(apply 시 교체): <ECR_REPOSITORY_URL>:<TAG>
-          image: shopmall-api:local
+          image: 092042969614.dkr.ecr.ap-northeast-2.amazonaws.com/shopmall-app:latest
           ports:
             - containerPort: 8000
           envFrom:
