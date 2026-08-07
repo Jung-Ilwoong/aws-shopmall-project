@@ -18,6 +18,7 @@ output "cloudfront_domain" {
   value = aws_cloudfront_distribution.uploads.domain_name
 }
 
-output "bastion_public_ip" {
-  value = aws_instance.bastion.public_ip
+output "bastion_instance_id" {
+  value       = aws_instance.bastion.id
+  description = "aws ssm start-session --target <이 값> 으로 접속"
 }

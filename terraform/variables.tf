@@ -67,13 +67,3 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
-
-variable "key_name" {
-  type        = string
-  description = "Bastion SSH key pair name (must already exist in AWS EC2 Key Pairs)"
-}
-
-variable "my_ip_cidr" {
-  type        = string
-  description = "Your IP address for bastion SSH access, e.g. 1.2.3.4/32"
-}
