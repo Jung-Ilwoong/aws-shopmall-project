@@ -1,36 +1,13 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8" />
-<title>Shopmall</title>
-<script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center">
-  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md text-center">
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">🛒 Shopmall</h1>
-    <p class="text-gray-500 mb-6">배포 스모크 테스트 페이지</p>
-
-    <div id="status" class="rounded-lg p-4 text-sm font-medium bg-gray-100 text-gray-600">
-      백엔드 연결 확인 중...
-    </div>
-  </div>
-
-  <script>
-    // TODO(apply 후 교체): 실제 API 접속 주소로 변경
-    const API_BASE_URL = "http://a35e5eaf042cf4718a6edda804244ed4-750104412.ap-northeast-2.elb.amazonaws.com";
-
-    fetch(`${API_BASE_URL}/health`)
-      .then((res) => res.json())
-      .then((data) => {
-        const el = document.getElementById("status");
-        el.textContent = `✅ 백엔드 연결 성공 (status: ${data.status})`;
-        el.className = "rounded-lg p-4 text-sm font-medium bg-green-100 text-green-700";
-      })
-      .catch(() => {
-        const el = document.getElementById("status");
-        el.textContent = "❌ 백엔드 연결 실패";
-        el.className = "rounded-lg p-4 text-sm font-medium bg-red-100 text-red-700";
-      });
-  </script>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopmall</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
