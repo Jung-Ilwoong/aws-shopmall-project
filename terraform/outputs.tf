@@ -28,6 +28,11 @@ output "frontend_bucket_name" {
   description = "CI/CD에서 aws s3 sync 대상이 될 버킷 이름"
 }
 
+output "frontend_cloudfront_distribution_id" {
+  value       = aws_cloudfront_distribution.frontend.id
+  description = "CI/CD에서 cloudfront create-invalidation에 쓸 distribution ID"
+}
+
 output "bastion_instance_id" {
   value       = aws_instance.bastion.id
   description = "aws ssm start-session --target <이 값> 으로 접속"
