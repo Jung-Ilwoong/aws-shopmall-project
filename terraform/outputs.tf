@@ -33,6 +33,11 @@ output "frontend_cloudfront_distribution_id" {
   description = "CI/CD에서 cloudfront create-invalidation에 쓸 distribution ID"
 }
 
+output "api_url" {
+  value       = "https://api.woong.shop"
+  description = "프론트엔드 VITE_API_URL / CI/CD 변수로 쓸 백엔드 HTTPS 주소"
+}
+
 output "bastion_instance_id" {
   value       = aws_instance.bastion.id
   description = "aws ssm start-session --target <이 값> 으로 접속"

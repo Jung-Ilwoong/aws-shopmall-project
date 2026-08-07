@@ -47,12 +47,14 @@ metadata:
   labels:
     app: shopmall-api
 spec:
+  type: NodePort
   selector:
     app: shopmall-api
   ports:
     - name: http
       port: 80
       targetPort: 8000
+      nodePort: 30080
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
