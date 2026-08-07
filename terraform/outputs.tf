@@ -18,6 +18,16 @@ output "cloudfront_domain" {
   value = aws_cloudfront_distribution.uploads.domain_name
 }
 
+output "frontend_cloudfront_domain" {
+  value       = aws_cloudfront_distribution.frontend.domain_name
+  description = "React 프론트엔드가 서빙되는 CloudFront 도메인"
+}
+
+output "frontend_bucket_name" {
+  value       = aws_s3_bucket.frontend.bucket
+  description = "CI/CD에서 aws s3 sync 대상이 될 버킷 이름"
+}
+
 output "bastion_instance_id" {
   value       = aws_instance.bastion.id
   description = "aws ssm start-session --target <이 값> 으로 접속"
