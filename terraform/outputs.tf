@@ -38,6 +38,11 @@ output "api_url" {
   description = "프론트엔드 VITE_API_URL / CI/CD 변수로 쓸 백엔드 HTTPS 주소"
 }
 
+output "frontend_url" {
+  value       = "https://mall.woong.shop"
+  description = "실제 쇼핑몰 화면 주소 (CloudFront에 커스텀 도메인 연결됨)"
+}
+
 output "bastion_instance_id" {
   value       = aws_instance.bastion.id
   description = "aws ssm start-session --target <이 값> 으로 접속"
