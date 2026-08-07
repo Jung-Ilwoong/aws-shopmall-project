@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import client from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
-const emptyForm = { name: "", description: "", price: "", stock: "", image_url: "" };
+const emptyForm = { name: "", description: "", price: "", stock: "", image_url: "", category: "" };
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -33,7 +33,10 @@ export default function AdminProductsPage() {
     if (!form.name) return;
     setGenerating(true);
     try {
-      const res = await client.post("/products/generate-description", { name: form.name });
+      const res = await client.post("/products/generate-description", {
+        name: form.name,
+        category: form.category || null,
+      });
       setForm((f) => ({ ...f, description: res.data.description }));
     } finally {
       setGenerating(false);
@@ -46,6 +49,7 @@ export default function AdminProductsPage() {
       ...form,
       price: Number(form.price),
       stock: Number(form.stock),
+      category: form.category || null,
     };
 
     if (editingId) {
@@ -59,7 +63,14 @@ export default function AdminProductsPage() {
   };
 
   const handleEdit = (p) => {
-    setForm({ name: p.name, description: p.description || "", price: p.price, stock: p.stock, image_url: p.image_url || "" });
+    setForm({
+      name: p.name,
+      description: p.description || "",
+      price: p.price,
+      stock: p.stock,
+      image_url: p.image_url || "",
+      category: p.category || "",
+    });
     setEditingId(p.id);
   };
 
@@ -69,19 +80,27 @@ export default function AdminProductsPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div>
       <h1 className="text-2xl font-bold mb-4">상품 관리</h1>
 
       <form onSubmit={handleSubmit} className="card bg-base-100 shadow-sm p-4 mb-8 flex flex-col gap-3">
         <h2 className="font-bold">{editingId ? "상품 수정" : "새 상품 등록"}</h2>
 
-        <input
-          className="input input-bordered w-full"
-          placeholder="상품명"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-        />
+        <div className="flex gap-3">
+          <input
+            className="input input-bordered w-full"
+            placeholder="상품명"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            required
+          />
+          <input
+            className="input input-bordered w-full"
+            placeholder="카테고리 (선택)"
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+          />
+        </div>
 
         <div className="flex gap-2">
           <textarea
@@ -149,7 +168,9 @@ export default function AdminProductsPage() {
         {products.map((p) => (
           <div key={p.id} className="flex justify-between items-center border-b pb-2">
             <div>
-              <p className="font-medium">{p.name}</p>
+              <p className="font-medium">
+                {p.name} {p.category && <span className="badge badge-sm badge-outline ml-1">{p.category}</span>}
+              </p>
               <p className="text-sm text-gray-500">
                 {p.price.toLocaleString()}원 · 재고 {p.stock}개
               </p>

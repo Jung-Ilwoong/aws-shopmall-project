@@ -4,3 +4,9 @@
 body {
   margin: 0;
 }
+
+/* 가운데 정렬된 본문 컨테이너 안에서 특정 요소만 뷰포트 전체 폭을 쓰고 싶을 때 사용 (예: 큰 배너 이미지) */
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}

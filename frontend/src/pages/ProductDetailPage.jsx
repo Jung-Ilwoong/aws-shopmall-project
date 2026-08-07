@@ -37,7 +37,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div>
       <div className="h-64 bg-base-200 rounded-lg flex items-center justify-center mb-4">
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className="object-cover w-full h-full rounded-lg" />

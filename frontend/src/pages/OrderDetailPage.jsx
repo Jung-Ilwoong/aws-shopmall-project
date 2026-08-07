@@ -26,7 +26,7 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div>
       <h1 className="text-2xl font-bold mb-1">주문 #{order.id}</h1>
       <p className="text-sm text-gray-500 mb-4">{new Date(order.created_at).toLocaleString()}</p>
 

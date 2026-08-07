@@ -26,7 +26,7 @@ export default function OrderHistoryPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div>
       <h1 className="text-2xl font-bold mb-4">주문내역</h1>
 
       {orders.length === 0 ? (

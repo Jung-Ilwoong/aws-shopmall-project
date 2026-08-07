@@ -19,8 +19,30 @@ def generate_description(payload: schemas.DescriptionRequest):
 
 
 @router.get("", response_model=list[schemas.ProductOut])
-def list_products(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
-    return db.query(models.Product).offset(skip).limit(limit).all()
+def list_products(
+    skip: int = 0,
+    limit: int = 20,
+    search: str | None = None,
+    category: str | None = None,
+    db: Session = Depends(get_db),
+):
+    query = db.query(models.Product)
+    if search:
+        query = query.filter(models.Product.name.ilike(f"%{search}%"))
+    if category:
+        query = query.filter(models.Product.category == category)
+    return query.offset(skip).limit(limit).all()
+
+
+@router.get("/meta/categories", response_model=list[str])
+def list_categories(db: Session = Depends(get_db)):
+    rows = (
+        db.query(models.Product.category)
+        .filter(models.Product.category.isnot(None))
+        .distinct()
+        .all()
+    )
+    return [r[0] for r in rows]
 
 
 @router.get("/{product_id}", response_model=schemas.ProductOut)

@@ -36,6 +36,7 @@ class ProductCreate(BaseModel):
     price: float
     stock: int = 0
     image_url: Optional[str] = None
+    category: Optional[str] = None
 
 
 class ProductUpdate(BaseModel):
@@ -44,6 +45,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     stock: Optional[int] = None
     image_url: Optional[str] = None
+    category: Optional[str] = None
 
 
 class ProductOut(BaseModel):
@@ -55,6 +57,7 @@ class ProductOut(BaseModel):
     price: float
     stock: int
     image_url: Optional[str]
+    category: Optional[str]
     created_at: datetime
 
 
@@ -80,6 +83,10 @@ class DescriptionResponse(BaseModel):
 class CartItemCreate(BaseModel):
     product_id: int
     quantity: int = 1
+
+
+class CartItemUpdate(BaseModel):
+    quantity: int
 
 
 class CartItemOut(BaseModel):

@@ -38,6 +38,7 @@ class Product(Base):
     price = Column(Float, nullable=False)
     stock = Column(Integer, default=0, nullable=False)
     image_url = Column(String(500), nullable=True)
+    category = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
