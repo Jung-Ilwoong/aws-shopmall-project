@@ -30,7 +30,13 @@ def generate_description(payload: schemas.DescriptionRequest):
 def get_upload_url(payload: schemas.UploadUrlRequest):
     # 브라우저가 이 URL로 파일을 S3에 직접 PUT한다 (서버를 거치지 않음)
     key = f"products/{uuid.uuid4()}-{payload.filename}"
-    s3 = boto3.client("s3", region_name=settings.aws_region)
+    # botocore가 presigned URL을 만들 때 리전 엔드포인트 대신 글로벌 엔드포인트(s3.amazonaws.com)를
+    # 써서 307 리다이렉트가 나는 알려진 문제가 있음 -> endpoint_url을 명시해서 우회
+    s3 = boto3.client(
+        "s3",
+        region_name=settings.aws_region,
+        endpoint_url=f"https://s3.{settings.aws_region}.amazonaws.com",
+    )
     upload_url = s3.generate_presigned_url(
         "put_object",
         Params={

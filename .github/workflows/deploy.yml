@@ -52,5 +52,6 @@ jobs:
         env:
           IMAGE: ${{ steps.build-image.outputs.image }}
         run: |
+          kubectl apply -f k8s/api.yaml
           kubectl set image deployment/shopmall-api api=$IMAGE
           kubectl rollout status deployment/shopmall-api --timeout=120s
