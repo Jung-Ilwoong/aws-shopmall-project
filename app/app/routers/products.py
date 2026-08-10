@@ -1,8 +1,12 @@
+import uuid
+
+import boto3
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import ai, models, schemas
 from app.auth import get_current_admin
+from app.config import settings
 from app.database import get_db
 
 router = APIRouter(prefix="/products", tags=["products"])
@@ -16,6 +20,28 @@ router = APIRouter(prefix="/products", tags=["products"])
 def generate_description(payload: schemas.DescriptionRequest):
     description = ai.generate_product_description(payload.name, payload.category)
     return schemas.DescriptionResponse(description=description)
+
+
+@router.post(
+    "/upload-url",
+    response_model=schemas.UploadUrlResponse,
+    dependencies=[Depends(get_current_admin)],
+)
+def get_upload_url(payload: schemas.UploadUrlRequest):
+    # 브라우저가 이 URL로 파일을 S3에 직접 PUT한다 (서버를 거치지 않음)
+    key = f"products/{uuid.uuid4()}-{payload.filename}"
+    s3 = boto3.client("s3", region_name=settings.aws_region)
+    upload_url = s3.generate_presigned_url(
+        "put_object",
+        Params={
+            "Bucket": settings.s3_uploads_bucket,
+            "Key": key,
+            "ContentType": payload.content_type,
+        },
+        ExpiresIn=300,
+    )
+    public_url = f"https://{settings.uploads_cloudfront_domain}/{key}"
+    return schemas.UploadUrlResponse(upload_url=upload_url, public_url=public_url)
 
 
 @router.get("", response_model=list[schemas.ProductOut])

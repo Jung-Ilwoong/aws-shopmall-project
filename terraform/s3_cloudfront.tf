@@ -18,6 +18,35 @@ resource "aws_s3_bucket_public_access_block" "uploads" {
   restrict_public_buckets = true
 }
 
+# 백엔드 파드가 presigned URL을 발급하려면, 그 URL 서명에 쓰이는 자격증명(EKS 노드 IAM 역할,
+# 이 프로젝트는 IRSA 대신 노드 역할을 그대로 씀)에 실제 PutObject 권한이 있어야 함
+# 브라우저가 presigned URL로 이 버킷에 직접 PUT하려면 CORS 허용이 필요함
+# (없으면 브라우저가 응답에 Access-Control-Allow-Origin이 없다고 보고 요청을 막음)
+resource "aws_s3_bucket_cors_configuration" "uploads" {
+  bucket = aws_s3_bucket.uploads.id
+
+  cors_rule {
+    allowed_methods = ["PUT"]
+    allowed_origins = ["https://mall.woong.shop", "http://localhost:5173"]
+    allowed_headers = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "node_s3_uploads" {
+  name = "${var.project_name}-node-s3-uploads"
+  role = module.eks.eks_managed_node_groups["default"].iam_role_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "ProductImageUploads"
+      Effect   = "Allow"
+      Action   = ["s3:PutObject"]
+      Resource = "${aws_s3_bucket.uploads.arn}/products/*"
+    }]
+  })
+}
+
 resource "aws_cloudfront_origin_access_control" "uploads" {
   name                              = "${var.project_name}-oac"
   origin_access_control_origin_type = "s3"

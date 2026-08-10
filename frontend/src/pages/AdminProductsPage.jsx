@@ -10,6 +10,7 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { isLoggedIn, isAdmin, user } = useAuth();
   const navigate = useNavigate();
 
@@ -40,6 +41,30 @@ export default function AdminProductsPage() {
       setForm((f) => ({ ...f, description: res.data.description }));
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const { data } = await client.post("/products/upload-url", {
+        filename: file.name,
+        content_type: file.type,
+      });
+
+      await fetch(data.upload_url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      setForm((f) => ({ ...f, image_url: data.public_url }));
+    } finally {
+      setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -138,12 +163,19 @@ export default function AdminProductsPage() {
           />
         </div>
 
-        <input
-          className="input input-bordered w-full"
-          placeholder="이미지 URL (선택)"
-          value={form.image_url}
-          onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-        />
+        <div className="flex items-center gap-3">
+          <input
+            type="file"
+            accept="image/*"
+            className="file-input file-input-bordered w-full"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+          {uploading && <span className="loading loading-spinner loading-sm" />}
+          {form.image_url && !uploading && (
+            <img src={form.image_url} alt="미리보기" className="h-12 w-12 object-cover rounded" />
+          )}
+        </div>
 
         <div className="flex gap-2">
           <button type="submit" className="btn btn-primary">

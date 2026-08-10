@@ -14,6 +14,10 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str = ""
 
+    aws_region: str = "ap-northeast-2"
+    s3_uploads_bucket: str = ""
+    uploads_cloudfront_domain: str = ""
+
     class Config:
         env_file = ".env"
 

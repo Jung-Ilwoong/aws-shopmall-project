@@ -20,6 +20,11 @@ spec:
           envFrom:
             - secretRef:
                 name: shopmall-secrets
+          env:
+            - name: S3_UPLOADS_BUCKET
+              value: "shopmall-uploads-092042969614"
+            - name: UPLOADS_CLOUDFRONT_DOMAIN
+              value: "d3d46nbof38l8q.cloudfront.net"
           resources:
             requests:
               cpu: "100m"

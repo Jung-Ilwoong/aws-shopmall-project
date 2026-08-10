@@ -48,6 +48,16 @@ class ProductUpdate(BaseModel):
     category: Optional[str] = None
 
 
+class UploadUrlRequest(BaseModel):
+    filename: str
+    content_type: str
+
+
+class UploadUrlResponse(BaseModel):
+    upload_url: str
+    public_url: str
+
+
 class ProductOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
