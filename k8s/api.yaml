@@ -24,7 +24,7 @@ spec:
             - name: S3_UPLOADS_BUCKET
               value: "shopmall-uploads-092042969614"
             - name: UPLOADS_CLOUDFRONT_DOMAIN
-              value: "d3d46nbof38l8q.cloudfront.net"
+              value: "dtxruyjcxy3ak.cloudfront.net"
           resources:
             requests:
               cpu: "100m"
