@@ -25,3 +25,18 @@ resource "helm_release" "kube_prometheus_stack" {
 
   depends_on = [module.eks]
 }
+
+# ---------- metrics-server ----------
+# Prometheus와는 별개로, HPA(HorizontalPodAutoscaler)가 CPU/메모리 사용률을 읽으려면
+# metrics.k8s.io API를 제공하는 metrics-server가 반드시 필요함. EKS는 이걸 기본 제공하지
+# 않음 (직접 확인: 이거 없이는 `kubectl top`도, HPA의 CPU 타겟도 계속 <unknown>으로 뜸).
+resource "helm_release" "metrics_server" {
+  name             = "metrics-server"
+  repository       = "https://kubernetes-sigs.github.io/metrics-server/"
+  chart            = "metrics-server"
+  version          = "3.13.1"
+  namespace        = "kube-system"
+  create_namespace = false
+
+  depends_on = [module.eks]
+}
