@@ -47,3 +47,8 @@ output "bastion_instance_id" {
   value       = aws_instance.bastion.id
   description = "aws ssm start-session --target <이 값> 으로 접속"
 }
+
+output "grafana_access" {
+  value       = "kubectl port-forward -n monitoring svc/monitoring-grafana 3000:80  (admin / var.grafana_admin_password)"
+  description = "Grafana 접속 방법 — 별도 도메인 없이 port-forward로 접근"
+}
