@@ -11,6 +11,7 @@ terraform/crash.log
 **/__pycache__/
 *.pyc
 app/.env
+app/.pytest_cache/
 
 # K8s secrets (실제 값 포함, .example 템플릿만 커밋)
 k8s/api-secret.yaml
