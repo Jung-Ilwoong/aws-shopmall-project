@@ -24,7 +24,9 @@ spec:
             - name: S3_UPLOADS_BUCKET
               value: "shopmall-uploads-092042969614"
             - name: UPLOADS_CLOUDFRONT_DOMAIN
-              value: "dtxruyjcxy3ak.cloudfront.net"
+              # apply할 때마다 CloudFront 도메인이 새로 발급되므로 여기 값은 항상 플레이스홀더.
+              # 실제 값은 CI(deploy.yml)가 배포 직후 kubectl set env로 덮어씀.
+              value: "REPLACE_ME_AT_DEPLOY_TIME"
           resources:
             requests:
               cpu: "100m"

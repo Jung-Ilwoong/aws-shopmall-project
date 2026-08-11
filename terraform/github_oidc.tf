@@ -92,6 +92,14 @@ resource "aws_iam_role_policy" "github_actions" {
         Action   = "cloudfront:CreateInvalidation"
         Resource = aws_cloudfront_distribution.frontend.arn
       },
+      {
+        # ListDistributions는 CloudFront API 특성상 리소스 단위 제한이 안 되고 계정 전체 대상임
+        # (배포 시점에 uploads 버킷용 CloudFront 도메인을 동적으로 찾기 위해 필요)
+        Sid      = "CloudFrontListForUploadsDomainLookup"
+        Effect   = "Allow"
+        Action   = "cloudfront:ListDistributions"
+        Resource = "*"
+      },
     ]
   })
 }

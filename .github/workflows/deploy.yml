@@ -96,4 +96,12 @@ jobs:
         run: |
           kubectl apply -f k8s/api.yaml
           kubectl set image deployment/shopmall-api api=$IMAGE
+
+          # uploads용 CloudFront 도메인은 apply할 때마다 새로 발급되는 값이라 k8s/api.yaml에
+          # 고정값으로 못 둠 — 매 배포마다 실제 값을 조회해서 덮어씀
+          UPLOADS_DOMAIN=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Origins.Items[0].DomainName=='shopmall-uploads-092042969614.s3.ap-northeast-2.amazonaws.com'].DomainName" \
+            --output text)
+          kubectl set env deployment/shopmall-api UPLOADS_CLOUDFRONT_DOMAIN=$UPLOADS_DOMAIN
+
           kubectl rollout status deployment/shopmall-api --timeout=120s
