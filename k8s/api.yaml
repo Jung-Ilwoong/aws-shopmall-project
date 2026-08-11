@@ -12,12 +12,17 @@ spec:
       labels:
         app: shopmall-api
     spec:
+      # Terraform이 만들어둔 ServiceAccount(IRSA) — 이 파드만 Secrets Manager의
+      # shopmall/app-secrets를 읽을 수 있는 IAM 권한을 여기 연결된 역할을 통해 가짐
+      serviceAccountName: shopmall-api
       containers:
         - name: api
           image: 092042969614.dkr.ecr.ap-northeast-2.amazonaws.com/shopmall-app:latest
           ports:
             - containerPort: 8000
           envFrom:
+            # 이 Secret은 더 이상 손으로 안 만듦 — SecretProviderClass가 아래 볼륨을
+            # 마운트하는 순간 Secrets Manager 값으로 자동 생성/갱신됨
             - secretRef:
                 name: shopmall-secrets
           env:
@@ -27,6 +32,10 @@ spec:
               # apply할 때마다 CloudFront 도메인이 새로 발급되므로 여기 값은 항상 플레이스홀더.
               # 실제 값은 CI(deploy.yml)가 배포 직후 kubectl set env로 덮어씀.
               value: "REPLACE_ME_AT_DEPLOY_TIME"
+          volumeMounts:
+            - name: secrets-store
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
           resources:
             requests:
               cpu: "100m"
@@ -46,6 +55,16 @@ spec:
               port: 8000
             initialDelaySeconds: 15
             periodSeconds: 20
+      volumes:
+        # 앱은 이 마운트 경로를 실제로 읽지 않음 — 이 볼륨이 마운트되는 것 자체가
+        # CSI 드라이버에게 "지금 시크릿을 가져와서 shopmall-secrets Secret으로 동기화해라"는
+        # 신호라서 필요함
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "shopmall-secrets-provider"
 ---
 apiVersion: v1
 kind: Service

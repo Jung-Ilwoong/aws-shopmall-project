@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.15"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.30"
+    }
   }
 
   # state 파일을 로컬이 아니라 S3에 저장 (이 노트북이 없어져도 인프라 추적 가능하게).
@@ -47,5 +51,18 @@ provider "helm" {
       command     = "aws"
       args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.region]
     }
+  }
+}
+
+# Secrets Manager 연동에 쓰는 ServiceAccount(IRSA)를 Terraform이 직접 만들기 위해 필요
+# (helm과 동일한 인증 방식 — kubeconfig 파일 대신 매번 임시 토큰 발급)
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.region]
   }
 }

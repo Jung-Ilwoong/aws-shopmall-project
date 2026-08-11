@@ -76,3 +76,13 @@ variable "grafana_admin_password" {
 variable "budget_alert_email" {
   type = string
 }
+
+variable "jwt_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "anthropic_api_key" {
+  type      = string
+  sensitive = true
+}
