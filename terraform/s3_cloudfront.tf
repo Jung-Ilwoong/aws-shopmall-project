@@ -32,20 +32,10 @@ resource "aws_s3_bucket_cors_configuration" "uploads" {
   }
 }
 
-resource "aws_iam_role_policy" "node_s3_uploads" {
-  name = "${var.project_name}-node-s3-uploads"
-  role = module.eks.eks_managed_node_groups["default"].iam_role_name
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Sid      = "ProductImageUploads"
-      Effect   = "Allow"
-      Action   = ["s3:PutObject"]
-      Resource = "${aws_s3_bucket.uploads.arn}/products/*"
-    }]
-  })
-}
+# (예전엔 이미지 업로드용 S3 권한을 EKS 노드 역할에 붙였었는데, secrets.tf에서 파드에
+# IRSA(shopmall-app-secrets-role)를 붙인 뒤로는 파드가 노드 역할을 더 이상 안 써서
+# 여기 권한은 무의미해짐 — 실제로 이것 때문에 업로드가 막혔던 걸 확인하고 IRSA 역할
+# 쪽으로 권한을 옮김 (terraform/secrets.tf의 aws_iam_role_policy.app_secrets 참고))
 
 resource "aws_cloudfront_origin_access_control" "uploads" {
   name                              = "${var.project_name}-oac"

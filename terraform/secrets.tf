@@ -54,13 +54,26 @@ resource "aws_iam_role_policy" "app_secrets" {
   name = "${var.project_name}-app-secrets-policy"
   role = aws_iam_role.app_secrets.id
 
+  # IRSA(ServiceAccount)를 붙인 순간부터 파드 안 boto3는 EKS 노드 역할 대신 이 역할을 쓰게
+  # 됨 — 그래서 s3_cloudfront.tf에 이미 노드 역할용 S3 업로드 권한을 붙여뒀어도 파드는 더
+  # 이상 그걸 안 씀. 실제로 이걸 놓쳐서 "S3 PutObject AccessDenied"로 이미지 업로드가 막혔던
+  # 적이 있어서, Secrets Manager 권한과 S3 업로드 권한을 같은 역할에 함께 부여함.
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
-      Resource = aws_secretsmanager_secret.app.arn
-    }]
+    Statement = [
+      {
+        Sid      = "SecretsAccess"
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
+        Resource = aws_secretsmanager_secret.app.arn
+      },
+      {
+        Sid      = "ProductImageUploads"
+        Effect   = "Allow"
+        Action   = ["s3:PutObject"]
+        Resource = "${aws_s3_bucket.uploads.arn}/products/*"
+      }
+    ]
   })
 }
 
