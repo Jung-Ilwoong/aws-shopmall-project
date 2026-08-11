@@ -40,6 +40,7 @@ Shopmall 캡스톤 프로젝트의 실측 요금 기반 비용 분석. 시각화
 - **S3 `force_destroy`, ECR `force_delete`** — 비어있지 않은 버킷/레포가 destroy를 막는 걸 방지. 이 설정이 없어서 destroy가 3번 실패했던 경험이 있어 처음부터 적용.
 - **NodePort + Terraform 관리 ALB, kubectl LoadBalancer 미사용** — kubectl로 LoadBalancer 타입 Service를 만들면 Terraform이 모르는 AWS 리소스(ELB)가 생겨 destroy가 막힘. 이 구조를 피해서 두 번째 destroy는 재시도 없이 한 번에 완료.
 - **Terraform state를 S3(+자체 락)로 이전, DynamoDB는 미사용** — state 저장/락 비용은 안 쓰는 동안 사실상 $0.
+- **AWS Budgets로 월 $20 초과 시 이메일 알림** — 완전 무료. 평소 지출 패턴(사이클당 $1~2)보다 훨씬 높은 값을 임계값으로 잡아, 뭔가를 끄는 걸 깜빡하고 계속 켜뒀을 때만 조기에 알아차리는 안전망.
 
 ## 아직 반영 안 한 항목의 예상 추가 비용
 
@@ -47,7 +48,7 @@ Shopmall 캡스톤 프로젝트의 실측 요금 기반 비용 분석. 시각화
 |---|---|---|
 | WAF | +$5~10/월 | 기본 규칙 세트 기준, 리퀘스트 처리량에 따라 변동 |
 | Secrets Manager | +$0.40/시크릿 | 현재 k8s Secret 평문 대신 사용 시. API 호출 비용 별도 소액 |
-| AWS Budgets | 무료 | 예산 알림 2개까지 무료 — 비용 대비 가장 먼저 추가할 가치 있음 |
+| SES | ≈$0.0001/건 (AWS Price List API 실측) | 회원가입 이메일 인증, 주문완료 메일. 인증코드 생성/저장/대조 로직은 별도로 FastAPI에 구현 필요 |
 
 ## 방법론 / 한계
 
