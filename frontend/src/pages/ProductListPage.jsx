@@ -31,7 +31,7 @@ export default function ProductListPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row gap-2 mb-6">
+      <div className="sticky top-16 z-40 bg-base-100 flex flex-col sm:flex-row gap-2 py-3 mb-3">
         <input
           type="text"
           placeholder="상품명 검색"
