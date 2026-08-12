@@ -20,16 +20,16 @@ resource "aws_iam_role" "github_actions" {
       }
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
+        # main 브랜치로의 push에서 실행되는 워크플로우만 이 Role을 assume 할 수 있음.
+        # GitHub가 sub claim에 계정/리포 이름 뒤 숫자 ID를 붙이는 형식을 쓰길래
+        # (CloudTrail의 AccessDenied 이벤트로 실제 값을 확인함), 처음엔 그 숫자 부분을
+        # 와일드카드(StringLike)로 흡수했었음 — 근데 와일드카드라 "Jung-Ilwoong"으로
+        # 시작하는 다른 계정 + "aws-shopmall-project"로 시작하는 다른 리포도 이론상
+        # 이 조건을 통과할 수 있는 틈이 있어서, 확인해둔 정확한 숫자 ID로 완전 고정
+        # (계정/리포를 지우고 새로 만들지 않는 한 이 ID는 안 바뀜)
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-        }
-        # main 브랜치로의 push에서 실행되는 워크플로우만 이 Role을 assume 할 수 있음.
-        # GitHub가 최근 sub claim에 계정/리포 이름 뒤 숫자 ID를 붙이는 형식으로 바뀌어서
-        # (예: repo:Jung-Ilwoong@100551482/aws-shopmall-project@1322439962:ref:...),
-        # 그 숫자 부분만 와일드카드로 흡수하고 나머지는 정확히 매칭시킴 (CloudTrail의
-        # AccessDenied 이벤트로 실제 sub 값을 확인하고 맞춘 것)
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:Jung-Ilwoong*/aws-shopmall-project*:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:Jung-Ilwoong@100551482/aws-shopmall-project@1322439962:ref:refs/heads/main"
         }
       }
     }]
