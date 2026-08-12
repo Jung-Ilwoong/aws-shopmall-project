@@ -7,7 +7,7 @@ export default function CartPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isEmailVerified, openVerifyModal } = useAuth();
   const navigate = useNavigate();
 
   const loadCart = () => {
@@ -109,9 +109,15 @@ export default function CartPage() {
 
           <div className="flex justify-between items-center mt-6">
             <p className="text-xl font-bold">합계: {total.toLocaleString()}원</p>
-            <button className="btn btn-primary" onClick={checkout}>
-              주문하기
-            </button>
+            {isEmailVerified ? (
+              <button className="btn btn-primary" onClick={checkout}>
+                주문하기
+              </button>
+            ) : (
+              <button className="btn btn-primary" onClick={openVerifyModal}>
+                이메일 인증 후 주문 가능
+              </button>
+            )}
           </div>
 
           {error && <p className="text-error text-sm mt-2">{error}</p>}

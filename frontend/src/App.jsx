@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import ChatWidget from "./components/ChatWidget";
+import EmailVerifyGate from "./components/EmailVerifyGate";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProductListPage from "./pages/ProductListPage";
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
       <Header />
+      <EmailVerifyGate />
       <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
         <Routes>
           <Route path="/" element={<ProductListPage />} />

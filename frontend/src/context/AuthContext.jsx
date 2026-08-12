@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
 
   const fetchMe = async () => {
     try {
@@ -44,8 +45,13 @@ export function AuthProvider({ children }) {
     user,
     isLoggedIn: !!token,
     isAdmin: !!user?.is_admin,
+    isEmailVerified: !!user?.is_email_verified,
     login,
     logout,
+    refreshUser: fetchMe,
+    verifyModalOpen,
+    openVerifyModal: () => setVerifyModalOpen(true),
+    closeVerifyModal: () => setVerifyModalOpen(false),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
