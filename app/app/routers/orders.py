@@ -10,6 +10,9 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 
 @router.post("", response_model=schemas.OrderOut, status_code=201)
 def checkout(user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not user.is_email_verified:
+        raise HTTPException(status_code=403, detail="이메일 인증 후 주문할 수 있습니다")
+
     cart_items = db.query(models.CartItem).filter(models.CartItem.user_id == user.id).all()
     if not cart_items:
         raise HTTPException(status_code=400, detail="장바구니가 비어있습니다")

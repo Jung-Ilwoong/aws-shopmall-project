@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     s3_uploads_bucket: str = ""
     uploads_cloudfront_domain: str = ""
 
+    # 비어있으면(로컬 개발 등 SES 미설정 상태) 실제 발송 대신 콘솔 로그로 코드를 대체함
+    ses_sender_email: str = ""
+
     class Config:
         env_file = ".env"
 

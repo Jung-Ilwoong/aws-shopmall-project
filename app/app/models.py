@@ -25,6 +25,20 @@ class User(Base):
     is_admin = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    name = Column(String(100), nullable=False)
+    phone = Column(String(20), nullable=False)
+    postcode = Column(String(10), nullable=False)
+    address = Column(String(255), nullable=False)
+    address_detail = Column(String(255), nullable=False)
+
+    terms_agreed = Column(Boolean, default=False, nullable=False)
+    privacy_agreed = Column(Boolean, default=False, nullable=False)
+    marketing_agreed = Column(Boolean, default=False, nullable=False)
+
+    is_email_verified = Column(Boolean, default=False, nullable=False)
+    email_verification_code = Column(String(10), nullable=True)
+    email_verification_expires_at = Column(DateTime, nullable=True)
+
     cart_items = relationship("CartItem", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user")
 
