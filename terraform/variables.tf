@@ -82,6 +82,21 @@ variable "jwt_secret" {
   sensitive = true
 }
 
+variable "gmail_smtp_username" {
+  type      = string
+  sensitive = true
+}
+
+variable "gmail_smtp_app_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "alert_email" {
+  type    = string
+  default = "jiw3052@gmail.com"
+}
+
 variable "anthropic_api_key" {
   type      = string
   sensitive = true
