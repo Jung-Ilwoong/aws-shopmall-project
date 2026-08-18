@@ -95,7 +95,7 @@ terraform apply
 
 apply 후 수동으로 해줘야 하는 것:
 
-1. `kubectl apply -f k8s/secretproviderclass.yaml -f k8s/api.yaml` (최초 1회, 이후엔 CI가 처리)
+1. `kubectl apply -f k8s/secretproviderclass.yaml -f k8s/api.yaml` — 최초 1회만 수동으로. `api.yaml`은 이후 CI가 대신 적용하지만, `secretproviderclass.yaml`은 CI(GitHub Actions 역할)가 이 CRD(secretproviderclasses.secrets-store.csi.x-k8s.io)에 대한 권한이 없어서 계속 수동으로만 적용해야 함 — 내용이 바뀔 때만 다시 실행하면 됨
 2. GitHub repo **Settings → Secrets and variables → Actions → Variables**에 등록:
    - `AWS_ROLE_ARN`, `FRONTEND_S3_BUCKET`, `VITE_API_URL` — apply마다 값이 그대로 유지됨
    - `FRONTEND_CLOUDFRONT_DISTRIBUTION_ID` — **apply할 때마다 새로 발급되는 값이라 매번 갱신 필요**

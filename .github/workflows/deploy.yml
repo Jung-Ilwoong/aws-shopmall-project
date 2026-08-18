@@ -94,7 +94,10 @@ jobs:
         env:
           IMAGE: ${{ steps.build-image.outputs.image }}
         run: |
-          kubectl apply -f k8s/secretproviderclass.yaml
+          # secretproviderclass.yaml은 여기서 안 다룸 — GitHub Actions 역할(AmazonEKSEditPolicy)이
+          # 이 CRD(secretproviderclasses.secrets-store.csi.x-k8s.io)에 대한 권한이 없어서
+          # kubectl apply가 403으로 막힘(실제 CI 실행에서 확인). 이 리소스는 거의 안 바뀌고
+          # 이미 최초 배포 시 수동으로 적용해뒀으니, 바뀔 때만 수동으로 재적용하면 됨.
           kubectl apply -f k8s/api.yaml
           kubectl set image deployment/shopmall-api api=$IMAGE
 
