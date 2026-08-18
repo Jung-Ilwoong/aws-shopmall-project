@@ -36,8 +36,22 @@ def db_session():
         db.close()
 
 
-def register_and_login(client, email="user@example.com", password="testpass123"):
-    client.post("/auth/register", json={"email": email, "password": password})
+def register_and_login(client, email="user@example.com", password="testpass123!"):
+    client.post(
+        "/auth/register",
+        json={
+            "email": email,
+            "password": password,
+            "password_confirm": password,
+            "name": "테스트유저",
+            "phone": "01011112222",
+            "postcode": "12345",
+            "address": "서울시 테스트구 테스트로",
+            "address_detail": "1층",
+            "terms_agreed": True,
+            "privacy_agreed": True,
+        },
+    )
     res = client.post(
         "/auth/login",
         data={"username": email, "password": password},
@@ -46,8 +60,12 @@ def register_and_login(client, email="user@example.com", password="testpass123")
 
 
 @pytest.fixture
-def user_token(client):
-    return register_and_login(client)
+def user_token(client, db_session):
+    token = register_and_login(client)
+    user = db_session.query(models.User).filter(models.User.email == "user@example.com").first()
+    user.is_email_verified = True
+    db_session.commit()
+    return token
 
 
 @pytest.fixture
@@ -55,6 +73,7 @@ def admin_token(client, db_session):
     token = register_and_login(client, email="admin@example.com")
     user = db_session.query(models.User).filter(models.User.email == "admin@example.com").first()
     user.is_admin = True
+    user.is_email_verified = True
     db_session.commit()
     return token
 
