@@ -29,7 +29,11 @@ def generate_description(payload: schemas.DescriptionRequest):
 )
 def get_upload_url(payload: schemas.UploadUrlRequest):
     # 브라우저가 이 URL로 파일을 S3에 직접 PUT한다 (서버를 거치지 않음)
-    key = f"products/{uuid.uuid4()}-{payload.filename}"
+    # 원본 파일명(한글 등 비ASCII 포함 가능)을 키에 그대로 넣으면 public_url이 URL 인코딩
+    # 안 된 문자열이 되어 curl 등 엄격한 HTTP 클라이언트에서 400이 남(실제로 확인됨) ->
+    # 확장자만 남기고 UUID로만 키를 구성해 항상 ASCII-safe한 URL이 되게 함
+    extension = payload.filename.rsplit(".", 1)[-1] if "." in payload.filename else "bin"
+    key = f"products/{uuid.uuid4()}.{extension}"
     # botocore가 presigned URL을 만들 때 리전 엔드포인트 대신 글로벌 엔드포인트(s3.amazonaws.com)를
     # 써서 307 리다이렉트가 나는 알려진 문제가 있음 -> endpoint_url을 명시해서 우회
     s3 = boto3.client(
