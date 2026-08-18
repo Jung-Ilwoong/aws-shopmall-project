@@ -42,7 +42,12 @@ resource "helm_release" "kube_prometheus_stack" {
           group_interval  = "5m"
           repeat_interval = "12h"
           routes = [
-            { matchers = ["alertname = \"Watchdog\""], receiver = "null" }
+            { matchers = ["alertname = \"Watchdog\""], receiver = "null" },
+            # EKS는 컨트롤플레인을 AWS가 관리해서 kube-controller-manager/kube-scheduler
+            # 메트릭 자체를 노출 안 함 -> 차트 기본 규칙이 이걸 "컴포넌트가 사라졌다"고
+            # 영원히 오탐하며 12시간마다 계속 알림을 보냄. 실제 장애가 아니므로 조용히 처리
+            { matchers = ["alertname = \"KubeControllerManagerDown\""], receiver = "null" },
+            { matchers = ["alertname = \"KubeSchedulerDown\""], receiver = "null" }
           ]
         }
         receivers = [
